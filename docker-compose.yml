@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: slot_auth
+      POSTGRES_USER: slotauth
+      POSTGRES_PASSWORD: slotauth_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U slotauth -d slot_auth"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  slot-auth-service:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://postgres:5432/slot_auth
+      DB_USERNAME: slotauth
+      DB_PASSWORD: slotauth_dev_password
+      PLAYER_SESSION_TTL_SECONDS: 3600
+      EMPLOYEE_TOKEN_TTL_SECONDS: 28800
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

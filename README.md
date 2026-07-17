@@ -54,7 +54,7 @@
 |---|---|
 | Language | Java 21 |
 | Framework | Spring Boot 3.3.4 |
-| Build | Gradle 8.10.2 (Groovy DSL) |
+| Build | Maven 3.x |
 | Database | PostgreSQL 16 via Spring Data JPA |
 | Migrations | Flyway |
 | JWT | Nimbus JOSE JWT 9.40 (RS256) |
@@ -295,7 +295,7 @@ psql -U postgres -c "CREATE USER slotauth WITH PASSWORD 'slotauth';"
 psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE slot_auth TO slotauth;"
 
 # Run
-./gradlew bootRun
+mvn spring-boot:run
 ```
 
 The service starts on port `8081`. Flyway migrations run automatically on startup, including the default admin seed (`uid=admin`, ****** — see [V4 migration](src/main/resources/db/migration/V4__seed_default_admin.sql) and check with your team for the initial password).
@@ -308,16 +308,16 @@ The service starts on port `8081`. Flyway migrations run automatically on startu
 
 ```bash
 # All tests (unit + integration — requires Docker for Testcontainers)
-./gradlew test
+mvn test
 
 # Unit tests only
-./gradlew test --tests "com.slotcentral.auth.service.*"
+mvn test -Dtest="com.slotcentral.auth.service.*"
 
 # Integration tests only
-./gradlew test --tests "com.slotcentral.auth.integration.*"
+mvn test -Dtest="com.slotcentral.auth.integration.*"
 ```
 
-Test report: `build/reports/tests/test/index.html`
+Test report: `target/surefire-reports/`
 
 ---
 
